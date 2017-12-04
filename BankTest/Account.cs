@@ -90,16 +90,25 @@ namespace Bank
                     try
                     {
                         decimal depositedAmount = decimal.Parse(Console.ReadLine());
-                        var Internalaccount = btx.Accounts.SingleOrDefault(i => i.id == 1);
-                        var tempuser = currentUser;
-                        var user = btx.Users.SingleOrDefault(r => r.username == tempuser);
-                        var CurrentUserAccount = btx.Accounts.SingleOrDefault(i => i.id == user.id);
-                        btx.Accounts.Update(Internalaccount);
-                        btx.Accounts.Update(CurrentUserAccount);
-                        Internalaccount.Amount += depositedAmount;
-                        CurrentUserAccount.Amount -= depositedAmount;
-                        btx.SaveChanges();
-                        break;
+                        if (depositedAmount >= 0)
+                        {
+                            var Internalaccount = btx.Accounts.SingleOrDefault(i => i.id == 1);
+                            var tempuser = currentUser;
+                            var user = btx.Users.SingleOrDefault(r => r.username == tempuser);
+                            var CurrentUserAccount = btx.Accounts.SingleOrDefault(i => i.id == user.id);
+                            btx.Accounts.Update(Internalaccount);
+                            btx.Accounts.Update(CurrentUserAccount);
+                            Internalaccount.Amount += depositedAmount;
+                            CurrentUserAccount.Amount -= depositedAmount;
+                            btx.SaveChanges();
+                            break;
+                        }
+
+                        else
+                        {
+                            Console.WriteLine("Cannot deposit negative amounts");
+                            Console.ReadKey();
+                        }
                     }
                     catch (Exception)
                     {
@@ -150,7 +159,7 @@ namespace Bank
                                 {
                                     Console.Write("Select the amount you wish to deposit:\n>");
                                     decimal depositedAmount = decimal.Parse(Console.ReadLine());
-                                    if (depositedAmount > 0)
+                                    if (depositedAmount >= 0)
                                     {
                                         btx.Accounts.Update(accountToDeposit);
                                         btx.Accounts.Update(ActiveAccount);
@@ -199,40 +208,66 @@ namespace Bank
                     Console.Clear();
                     Console.OutputEncoding = Encoding.UTF8;
 
-                    try
+                    Console.WriteLine("Select user account you wish to withdraw from");
+                    string suser = Console.ReadLine();
+                    string BaseUser = currentUser;
+                    if (currentUser == "admin" && suser == "admin")
                     {
-                        Console.WriteLine("Select user account you wish to withdraw from");
-                        string suser = Console.ReadLine();
-                        string BaseUser = currentUser;
-                        if (currentUser == "admin" && suser == "admin")
-                        {
-                            Console.WriteLine("Invalid operation.Administrators cannot withdraw Internal Bank Account.");
-                            Console.ReadKey();
-                            continue;
-                        }
+                        Console.WriteLine("Invalid operation.Cannot withdraw from Internal Bank Account.");
+                        Console.ReadKey();
+                        continue;
+                    }
 
-                        else
+                    else
+                    {
+                        try
                         {
-                            Console.Write("Select the amount you wish to deposit:\n>");
-                            decimal depositedAmount = decimal.Parse(Console.ReadLine());
                             var userToWithdrawFrom = btx.Users.SingleOrDefault(r => r.username == suser);
                             var accountToWithdrawFrom = btx.Accounts.SingleOrDefault(i => i.id == userToWithdrawFrom.id);
-                            var Admin = btx.Users.SingleOrDefault(x => x.username == BaseUser);
-                            var AdminAccount = btx.Accounts.SingleOrDefault(y => y.id == Admin.id);
-                            btx.Accounts.Update(accountToWithdrawFrom);
-                            btx.Accounts.Update(AdminAccount);
-                            accountToWithdrawFrom.Amount -= depositedAmount;
-                            AdminAccount.Amount += depositedAmount;
-                            btx.SaveChanges();
+                            var ActiveUser = btx.Users.SingleOrDefault(x => x.username == BaseUser);
+                            var ActiveAccount = btx.Accounts.SingleOrDefault(y => y.id == ActiveUser.id);
+                            do
+                            {
+                                Console.Clear();
+                                try
+                                {
+                                    Console.Write("Select the amount you wish to withdraw:\n>");
+                                    decimal depositedAmount = decimal.Parse(Console.ReadLine());
+                                    if (depositedAmount >= 0)
+                                    {
+                                        btx.Accounts.Update(accountToWithdrawFrom);
+                                        btx.Accounts.Update(ActiveAccount);
+                                        accountToWithdrawFrom.Amount -= depositedAmount;
+                                        ActiveAccount.Amount += depositedAmount;
+                                        btx.SaveChanges();
+                                        break;
+                                    }
+
+                                    else
+                                    {
+                                        Console.WriteLine("Cannot withdraw negative amounts");
+                                        Console.ReadKey();
+                                        continue;
+                                    }
+
+                                }
+                                catch (Exception)
+                                {
+                                    Console.WriteLine("Invalid entry, please retype the amount");
+                                    Console.ReadKey();
+                                }
+                            } while (true);
+
                             break;
                         }
+                        catch (Exception)
+                        {
+                            Console.WriteLine("Invalid entry, user does not exist");
+                            Console.ReadKey();
+                        }
+                    }
 
-                    }
-                    catch (Exception)
-                    {
-                        Console.WriteLine("This is not a valid entry.Please try again.");
-                        Console.ReadKey();
-                    }
+
                 }
             }
             return "Statement";
