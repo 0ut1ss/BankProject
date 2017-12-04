@@ -78,7 +78,7 @@ namespace Bank
         }
 
         //Deposit to Internal Bank Account
-        public string DepositToInternal(string currentUser)
+        public void DepositToInternal(string currentUser)
         {
             using (BankContext btx = new BankContext())
             {
@@ -86,9 +86,9 @@ namespace Bank
                 {
                     Console.Clear();
                     Console.OutputEncoding = Encoding.UTF8;
-                    Console.Write("Select the amount you wish to deposit:\n>");
                     try
                     {
+                        Console.Write("Select the amount you wish to deposit:\n>");
                         decimal depositedAmount = decimal.Parse(Console.ReadLine());
                         if (depositedAmount >= 0)
                         {
@@ -100,6 +100,7 @@ namespace Bank
                             btx.Accounts.Update(CurrentUserAccount);
                             Internalaccount.Amount += depositedAmount;
                             CurrentUserAccount.Amount -= depositedAmount;
+                            FileAccess.AddToBuffer($"{currentUser} deposited {depositedAmount.ToString("C2", CultureInfo.CreateSpecificCulture("el-GR"))} to the Internal Bank Account");
                             btx.SaveChanges();
                             break;
                         }
@@ -115,9 +116,10 @@ namespace Bank
                         Console.WriteLine("This is not a valid entry.Please try again.");
                         Console.ReadKey();
                     }
+                    
                 }
+                
             }
-            return "Statement";
         }
         //Deposit to other accounts
         public string Deposit(string currentUser)
@@ -165,6 +167,7 @@ namespace Bank
                                         btx.Accounts.Update(ActiveAccount);
                                         accountToDeposit.Amount += depositedAmount;
                                         ActiveAccount.Amount -= depositedAmount;
+                                        FileAccess.AddToBuffer($"{currentUser} deposited {depositedAmount.ToString("C2", CultureInfo.CreateSpecificCulture("el-GR"))} to the Internal Bank Account");
                                         btx.SaveChanges();
                                         break;
                                     }

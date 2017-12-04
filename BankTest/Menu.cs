@@ -51,6 +51,7 @@ namespace Bank
                             else
                             {
                                 User.DepositToInternal(_userCredentials);
+
                             }
                             break;
 
@@ -66,7 +67,7 @@ namespace Bank
 
                             else
                             {
-                                User.SendStatement(_userCredentials);
+                                FileAccess.WriteToFile(_userCredentials);
                             }
                             break;
 
