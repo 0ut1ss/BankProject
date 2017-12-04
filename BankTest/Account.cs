@@ -129,9 +129,11 @@ namespace Bank
                         Console.ReadKey();
                         continue;
                     }
-                    else if (currentUser != "admin" && currentUser == suser)
+                    else if (currentUser != "admin" && currentUser == suser && suser != "admin")
                     {
                         Console.WriteLine("Invalid operation.Only deposit to other members allowed");
+                        Console.ReadKey();
+                        continue;
                     }
                     else
                     {
@@ -141,12 +143,15 @@ namespace Bank
                             var accountToDeposit = btx.Accounts.SingleOrDefault(i => i.id == userToDeposit.id);
                             var ActiveUser = btx.Users.SingleOrDefault(x => x.username == BaseUser);
                             var ActiveAccount = btx.Accounts.SingleOrDefault(y => y.id == ActiveUser.id);
-                            while (true)
+                            do
                             {
+                                Console.Clear();
                                 try
                                 {
                                     Console.Write("Select the amount you wish to deposit:\n>");
                                     decimal depositedAmount = decimal.Parse(Console.ReadLine());
+
+
                                     btx.Accounts.Update(accountToDeposit);
                                     btx.Accounts.Update(ActiveAccount);
                                     accountToDeposit.Amount += depositedAmount;
@@ -159,7 +164,8 @@ namespace Bank
                                     Console.WriteLine("Invalid entry, please retype the amount");
                                     Console.ReadKey();
                                 }
-                            }
+                            } while (true);
+
                             break;
                         }
                         catch (Exception)
