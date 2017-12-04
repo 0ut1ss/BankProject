@@ -150,14 +150,23 @@ namespace Bank
                                 {
                                     Console.Write("Select the amount you wish to deposit:\n>");
                                     decimal depositedAmount = decimal.Parse(Console.ReadLine());
+                                    if (depositedAmount > 0)
+                                    {
+                                        btx.Accounts.Update(accountToDeposit);
+                                        btx.Accounts.Update(ActiveAccount);
+                                        accountToDeposit.Amount += depositedAmount;
+                                        ActiveAccount.Amount -= depositedAmount;
+                                        btx.SaveChanges();
+                                        break;
+                                    }
 
+                                    else
+                                    {
+                                        Console.WriteLine("Cannot deposit negative amounts");
+                                        Console.ReadKey();
+                                        continue;
+                                    }
 
-                                    btx.Accounts.Update(accountToDeposit);
-                                    btx.Accounts.Update(ActiveAccount);
-                                    accountToDeposit.Amount += depositedAmount;
-                                    ActiveAccount.Amount -= depositedAmount;
-                                    btx.SaveChanges();
-                                    break;
                                 }
                                 catch (Exception)
                                 {
