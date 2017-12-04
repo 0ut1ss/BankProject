@@ -77,7 +77,7 @@ namespace Bank
         }
 
         //Deposit to Internal Bank Account
-        public string Deposit()
+        public string DepositToInternal(string currentUser)
         {
             using (BankContext btx = new BankContext())
             {
@@ -89,9 +89,14 @@ namespace Bank
                     try
                     {
                         decimal depositedAmount = decimal.Parse(Console.ReadLine());
-                        var account = btx.Accounts.SingleOrDefault(i => i.id == 1);
-                        btx.Accounts.Update(account);
-                        account.Amount += depositedAmount;
+                        var Internalaccount = btx.Accounts.SingleOrDefault(i => i.id == 1);
+                        var tempuser = currentUser;
+                        var user = btx.Users.SingleOrDefault(r => r.username == tempuser);
+                        var CurrentUserAccount = btx.Accounts.SingleOrDefault(i => i.id == user.id);
+                        btx.Accounts.Update(Internalaccount);
+                        btx.Accounts.Update(CurrentUserAccount);
+                        Internalaccount.Amount += depositedAmount;
+                        CurrentUserAccount.Amount -= depositedAmount;
                         btx.SaveChanges();
                         break;
                     }
@@ -104,7 +109,7 @@ namespace Bank
             }
             return "Statement";
         }
-
+        //Deposit to other accounts
         public string Deposit(string currentUser)
         {
             using (BankContext btx = new BankContext())
@@ -118,24 +123,29 @@ namespace Bank
                     {
                         Console.WriteLine("Select user account you wish to deposit to");
                         string suser = Console.ReadLine();
+                        string BaseUser = currentUser;
                         if (currentUser == "admin" && suser == "admin")
                         {
-                            Console.WriteLine("Administrators cannot deposit to Internal Bank Account.Please select another option");
+                            Console.WriteLine("Invalid operation.Administrators cannot deposit to Internal Bank Account.");
                             Console.ReadKey();
                             continue;
                         }
                         else if(currentUser != "admin"&& currentUser == suser)
                         {
-                            Console.WriteLine("Only deposits to other Members accounts are allowed");
+                            Console.WriteLine("Invalid operation.Only deposit to other members allowed");
                         }
                         else
                         {
                             Console.Write("Select the amount you wish to deposit:\n>");
                             decimal depositedAmount = decimal.Parse(Console.ReadLine());
-                            var user = btx.Users.SingleOrDefault(r => r.username == suser);
-                            var account = btx.Accounts.SingleOrDefault(i => i.id == user.id);
-                            btx.Accounts.Update(account);
-                            account.Amount += depositedAmount;
+                            var userToDeposit = btx.Users.SingleOrDefault(r => r.username == suser);
+                            var accountToDeposit = btx.Accounts.SingleOrDefault(i => i.id == userToDeposit.id);
+                            var ActiveUser = btx.Users.SingleOrDefault(x => x.username == BaseUser);
+                            var ActiveAccount = btx.Accounts.SingleOrDefault(y => y.id == ActiveUser.id);
+                            btx.Accounts.Update(accountToDeposit);
+                            btx.Accounts.Update(ActiveAccount);
+                            accountToDeposit.Amount += depositedAmount;
+                            ActiveAccount.Amount -= depositedAmount;
                             btx.SaveChanges();
                             break;
                         }

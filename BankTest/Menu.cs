@@ -18,6 +18,7 @@ namespace Bank
 
                 try
                 {
+                    Console.WriteLine($"WELCOME {_userCredentials.ToUpper()}\n");
                     if (_userCredentials == "admin")
                     {
                         Console.Write("1.View Internal Bank Account\n\n2.View Member Bank Account" +
@@ -49,7 +50,7 @@ namespace Bank
 
                             else
                             {
-                                User.Deposit();
+                                User.DepositToInternal(_userCredentials);
                             }
                             break;
 

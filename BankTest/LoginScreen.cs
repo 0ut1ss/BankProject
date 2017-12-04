@@ -13,11 +13,12 @@ namespace Bank
             {
                 while (true)
                 {
-                    Console.Write("Please enter your user name:\n>");
+                    Console.WriteLine("PLEASE TYPE YOUR CREDENTIALS\n");
+                    Console.Write("enter your user name:\n>");
                     string userName = Console.ReadLine();
 
 
-                    Console.Write("Please enter your password:\n>");
+                    Console.Write("enter your password:\n>");
                     string pWd = Console.ReadLine();
                     bool IsUser = btx.Users.Any(r => r.username == userName && r.password == pWd);
                     Console.Clear();
