@@ -61,8 +61,8 @@ namespace Bank
 
                         else
                         {
-                            var user = btx.Users.SingleOrDefault(r => r.username == suser);
-                            var account = btx.Accounts.SingleOrDefault(i => i.id == user.id);
+                            var user = btx.Users.SingleOrDefault(r => r.username == suser);//Create instance of user
+                            var account = btx.Accounts.SingleOrDefault(i => i.id == user.id); // Create instance of user account
                             Console.WriteLine(account.Amount.ToString("C2", CultureInfo.CreateSpecificCulture("el-GR")));
                         }
                         break;
@@ -100,7 +100,10 @@ namespace Bank
                             btx.Accounts.Update(CurrentUserAccount);
                             Internalaccount.Amount += depositedAmount;
                             CurrentUserAccount.Amount -= depositedAmount;
-                            FileAccess.AddToBuffer($"{currentUser} deposited {depositedAmount.ToString("C2", CultureInfo.CreateSpecificCulture("el-GR"))} to the Internal Bank Account");
+                            //Add action to Buffer List
+                            FileAccess.AddToBuffer($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} " +
+                                $"{currentUser.ToUpper()} deposited {depositedAmount.ToString("C2", CultureInfo.CreateSpecificCulture("el-GR"))}" +
+                                $" to the Internal Bank Account");
                             btx.SaveChanges();
                             break;
                         }
@@ -116,9 +119,9 @@ namespace Bank
                         Console.WriteLine("This is not a valid entry.Please try again.");
                         Console.ReadKey();
                     }
-                    
+
                 }
-                
+
             }
         }
         //Deposit to other accounts
@@ -140,9 +143,16 @@ namespace Bank
                         Console.ReadKey();
                         continue;
                     }
-                    else if (currentUser != "admin" && currentUser == suser && suser != "admin")
+                    else if (currentUser != "admin" && currentUser == suser && suser != "admin")//Check if user tries to deposit to themselves
                     {
                         Console.WriteLine("Invalid operation.Only deposit to other members allowed");
+                        Console.ReadKey();
+                        continue;
+                    }
+
+                    else if (currentUser != "admin" && suser == "admin")//Check if user tries to deposit to Admin
+                    {
+                        Console.WriteLine("Invalid operation.Please use the Deposit to Internal Bank Account option.");
                         Console.ReadKey();
                         continue;
                     }
@@ -150,9 +160,9 @@ namespace Bank
                     {
                         try
                         {
-                            var userToDeposit = btx.Users.SingleOrDefault(r => r.username == suser);
+                            var userToDeposit = btx.Users.SingleOrDefault(r => r.username == suser); //Create user for User account to deposit
                             var accountToDeposit = btx.Accounts.SingleOrDefault(i => i.id == userToDeposit.id);
-                            var ActiveUser = btx.Users.SingleOrDefault(x => x.username == BaseUser);
+                            var ActiveUser = btx.Users.SingleOrDefault(x => x.username == BaseUser); //Create user for Active user account
                             var ActiveAccount = btx.Accounts.SingleOrDefault(y => y.id == ActiveUser.id);
                             do
                             {
@@ -167,7 +177,9 @@ namespace Bank
                                         btx.Accounts.Update(ActiveAccount);
                                         accountToDeposit.Amount += depositedAmount;
                                         ActiveAccount.Amount -= depositedAmount;
-                                        FileAccess.AddToBuffer($"{currentUser} deposited {depositedAmount.ToString("C2", CultureInfo.CreateSpecificCulture("el-GR"))} to the Internal Bank Account");
+                                        FileAccess.AddToBuffer($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} " +
+                                $"{ActiveUser.username.ToUpper()} deposited {depositedAmount.ToString("C2", CultureInfo.CreateSpecificCulture("el-GR"))}" +
+                                $" to {userToDeposit.username.ToUpper()}");
                                         btx.SaveChanges();
                                         break;
                                     }
@@ -242,6 +254,9 @@ namespace Bank
                                         btx.Accounts.Update(ActiveAccount);
                                         accountToWithdrawFrom.Amount -= depositedAmount;
                                         ActiveAccount.Amount += depositedAmount;
+                                        FileAccess.AddToBuffer($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} " +
+                                        $"{ActiveUser.username.ToUpper()} withdrew {depositedAmount.ToString("C2", CultureInfo.CreateSpecificCulture("el-GR"))}" +
+                                        $" from {userToWithdrawFrom.username.ToUpper()}");
                                         btx.SaveChanges();
                                         break;
                                     }
@@ -276,13 +291,9 @@ namespace Bank
             return "Statement";
         }
 
-        public void SendStatement(string user)
-        {
-            Console.WriteLine("Send admin statement");
-        }
         public void ExitApp()
         {
-            Console.WriteLine("Bye!");
+            Console.WriteLine("Have a nice Day");
         }
     }
 }

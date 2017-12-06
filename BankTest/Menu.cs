@@ -74,7 +74,7 @@ namespace Bank
                         case 5:
                             if (_userCredentials == "admin")
                             {
-                                User.SendStatement(_userCredentials);
+                                FileAccess.WriteToFile(_userCredentials);
                             }
 
                             else

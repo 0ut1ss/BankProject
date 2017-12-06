@@ -12,7 +12,7 @@ namespace Bank
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Data Source=DESKTOP-Q6FQQ59\SQLEXPRESS;Initial Catalog = Bank;Integrated Security = true;");
+            optionsBuilder.UseSqlServer(@"Data Source=DESKTOP-ATLBSDK\SQLEXPRESS;Initial Catalog = Bank;Integrated Security = true;");
 
         }
     }
