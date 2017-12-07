@@ -100,9 +100,11 @@ namespace Bank
                             btx.Accounts.Update(CurrentUserAccount);
                             Internalaccount.Amount += depositedAmount;
                             CurrentUserAccount.Amount -= depositedAmount;
+                            var formattedAmount = depositedAmount.ToString("C2", CultureInfo.CreateSpecificCulture("el-GR"));
+                            Console.WriteLine($"Successfully deposited {formattedAmount}");
                             //Add action to Buffer List
                             FileAccess.AddToBuffer($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} " +
-                                $"{currentUser.ToUpper()} deposited {depositedAmount.ToString("C2", CultureInfo.CreateSpecificCulture("el-GR"))}" +
+                                $"{currentUser.ToUpper()} deposited {formattedAmount}" +
                                 $" to the Internal Bank Account");
                             btx.SaveChanges();
                             break;
@@ -177,9 +179,11 @@ namespace Bank
                                         btx.Accounts.Update(ActiveAccount);
                                         accountToDeposit.Amount += depositedAmount;
                                         ActiveAccount.Amount -= depositedAmount;
+                                        var formattedAmount = depositedAmount.ToString("C2", CultureInfo.CreateSpecificCulture("el-GR"));
+                                        Console.WriteLine($"Successfully deposited {formattedAmount}");
                                         FileAccess.AddToBuffer($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} " +
-                                $"{ActiveUser.username.ToUpper()} deposited {depositedAmount.ToString("C2", CultureInfo.CreateSpecificCulture("el-GR"))}" +
-                                $" to {userToDeposit.username.ToUpper()}");
+                                        $"{ActiveUser.username.ToUpper()} deposited {formattedAmount}" +
+                                        $" to {userToDeposit.username.ToUpper()}");
                                         btx.SaveChanges();
                                         break;
                                     }
@@ -247,15 +251,17 @@ namespace Bank
                                 try
                                 {
                                     Console.Write("Select the amount you wish to withdraw:\n>");
-                                    decimal depositedAmount = decimal.Parse(Console.ReadLine());
-                                    if (depositedAmount >= 0)
+                                    decimal withdrawnAmount = decimal.Parse(Console.ReadLine());
+                                    if (withdrawnAmount >= 0)
                                     {
                                         btx.Accounts.Update(accountToWithdrawFrom);
                                         btx.Accounts.Update(ActiveAccount);
-                                        accountToWithdrawFrom.Amount -= depositedAmount;
-                                        ActiveAccount.Amount += depositedAmount;
+                                        accountToWithdrawFrom.Amount -= withdrawnAmount;
+                                        ActiveAccount.Amount += withdrawnAmount;
+                                        var formattedAmount = withdrawnAmount.ToString("C2", CultureInfo.CreateSpecificCulture("el-GR"));
+                                        Console.WriteLine($"Successfully withdrawn {formattedAmount}");
                                         FileAccess.AddToBuffer($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} " +
-                                        $"{ActiveUser.username.ToUpper()} withdrew {depositedAmount.ToString("C2", CultureInfo.CreateSpecificCulture("el-GR"))}" +
+                                        $"{ActiveUser.username.ToUpper()} withdrew {withdrawnAmount.ToString("C2", CultureInfo.CreateSpecificCulture("el-GR"))}" +
                                         $" from {userToWithdrawFrom.username.ToUpper()}");
                                         btx.SaveChanges();
                                         break;

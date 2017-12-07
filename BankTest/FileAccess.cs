@@ -23,6 +23,7 @@ namespace Bank
             var fileToCreate = $"statement_{user}_{formatDateTime}.txt";
 
             File.WriteAllLines(fileToCreate, Buffer);
+            Console.WriteLine("Statement written to file");
             return true;
         }
     }
