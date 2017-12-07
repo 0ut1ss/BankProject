@@ -68,6 +68,7 @@ namespace Bank
                             else
                             {
                                 FileAccess.WriteToFile(_userCredentials);
+
                             }
                             break;
 
