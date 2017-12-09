@@ -106,7 +106,6 @@ namespace Bank
             }
         }
 
-        //Deposit to Internal Bank Account
         public void DepositToInternal(string currentUser)
         {
             using (BankContext btx = new BankContext())
