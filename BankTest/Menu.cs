@@ -39,13 +39,13 @@ namespace Bank
                     {
                         case 1:
                             {
-                                User.ViewBalance(_userCredentials);
+                                User.ViewBalance(_userCredentials, false);//All users access their own account
                             }
                             break;
                         case 2:
                             if (_userCredentials == "admin")
                             {
-                                User.ViewBalance();
+                                User.ViewBalance(_userCredentials, true);//Admin accessses other accounts
                             }
 
                             else

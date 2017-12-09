@@ -58,45 +58,49 @@ namespace Bank
 
         }
 
-        public void ViewBalance(string currentUser)
-        {
-            using (BankContext btx = new BankContext())
-            {
-                var user = CreateUser(btx, currentUser);
-                var account = CreateAccount(btx, currentUser);
-                account.DisplayAmount(account);
-            }
-        }
-        //View normal account balance as Admin
-        public void ViewBalance()
+
+        public void ViewBalance(string currentUser, bool IsViewOtherAccount)
         {
             using (BankContext btx = new BankContext())
             {
                 while (true)
                 {
-                    Console.Clear();
-                    Console.Write("Select user account you wish to access:\n>");
-                    string suser = Console.ReadLine();
-                    try
+                    if(IsViewOtherAccount)
                     {
-                        if (suser == "admin")
+                        Console.Clear();
+                        Console.Write("Select user account you wish to access:\n>");
+                        string suser = Console.ReadLine();
+                        try
                         {
-                            Console.WriteLine("To view the Internal Bank Account Balance, please select option number 1");
-                        }
+                            if (suser == "admin")
+                            {
+                                Console.WriteLine("To view the Internal Bank Account Balance, please select option number 1");
+                                
+                            }
 
-                        else
-                        {
-                            var user = CreateUser(btx, suser);
-                            var account = CreateAccount(btx, suser);
-                            account.DisplayAmount(account);
+                            else
+                            {
+                                var user = CreateUser(btx, suser);
+                                var account = CreateAccount(btx, suser);
+                                account.DisplayAmount(account);
+                            }
+                            break;
                         }
+                        catch (Exception)
+                        {
+                            Console.WriteLine("The user you typed does not exist.\nPlease try again.");
+                            Console.ReadKey();
+                        }
+                    }
+
+                    else
+                    {
+                        var user = CreateUser(btx, currentUser);
+                        var account = CreateAccount(btx, currentUser);
+                        account.DisplayAmount(account);
                         break;
                     }
-                    catch (Exception)
-                    {
-                        Console.WriteLine("The user you typed does not exist.\nPlease try again.");
-                        Console.ReadKey();
-                    }
+                    
                 }
 
             }
