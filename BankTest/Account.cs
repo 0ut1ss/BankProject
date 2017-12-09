@@ -150,7 +150,7 @@ namespace Bank
             }
         }
         //Deposit to other accounts
-        public string Deposit(string currentUser)
+        public void Deposit(string currentUser)
         {
             using (BankContext btx = new BankContext())
             {
@@ -236,10 +236,10 @@ namespace Bank
 
                 }
             }
-            return "Statement";
+            
         }
         //Withdraws funds from users, adds them to internal bank account
-        public string Withdraw(string currentUser)
+        public void Withdraw(string currentUser)
         {
             using (BankContext btx = new BankContext())
             {
@@ -312,7 +312,7 @@ namespace Bank
 
                 }
             }
-            return "Statement";
+            
         }
 
         public void ExitApp()
