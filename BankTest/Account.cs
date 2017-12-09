@@ -21,6 +21,7 @@ namespace Bank
         {
             transaction_date = new DateTime();
         }
+
     }
 
     public class User
@@ -30,14 +31,28 @@ namespace Bank
         public string username { get; set; }
         public string password { get; set; }
 
+        public User CreateUser(BankContext btc, string xuser)
+        {
+            var user = new User();
+           return  user = btc.Users.SingleOrDefault(r => r.username == xuser);
+            
+        }
+
+        public Account CreateAccount(BankContext btc, string user)
+        {
+            var Account = new Account();
+            var User = CreateUser(btc, user);
+            return Account = btc.Accounts.SingleOrDefault(i => i.id == User.id);
+
+        }
+
         public void ViewBalance(string currentUser)
         {
             using (BankContext btx = new BankContext())
             {
                 Console.OutputEncoding = Encoding.UTF8;
-                string suser = currentUser;
-                var user = btx.Users.SingleOrDefault(r => r.username == suser);
-                var account = btx.Accounts.SingleOrDefault(i => i.id == user.id);
+                var user = CreateUser(btx, currentUser);
+                var account = CreateAccount(btx, currentUser);
                 Console.WriteLine(account.Amount.ToString("C2", CultureInfo.CreateSpecificCulture("el-GR")));
             }
         }
@@ -61,8 +76,8 @@ namespace Bank
 
                         else
                         {
-                            var user = btx.Users.SingleOrDefault(r => r.username == suser);//Create instance of user
-                            var account = btx.Accounts.SingleOrDefault(i => i.id == user.id); // Create instance of user account
+                            var user = CreateUser(btx, suser);
+                            var account = CreateAccount(btx, suser);
                             Console.WriteLine(account.Amount.ToString("C2", CultureInfo.CreateSpecificCulture("el-GR")));
                         }
                         break;
@@ -92,10 +107,9 @@ namespace Bank
                         decimal depositedAmount = decimal.Parse(Console.ReadLine());
                         if (depositedAmount >= 0)
                         {
-                            var Internalaccount = btx.Accounts.SingleOrDefault(i => i.id == 1);
-                            var tempuser = currentUser;
-                            var user = btx.Users.SingleOrDefault(r => r.username == tempuser);
-                            var CurrentUserAccount = btx.Accounts.SingleOrDefault(i => i.id == user.id);
+                            var Internalaccount = CreateAccount(btx, "admin");
+                            var user = CreateUser(btx, currentUser);
+                            var CurrentUserAccount = CreateAccount(btx, currentUser);
                             btx.Accounts.Update(Internalaccount);
                             btx.Accounts.Update(CurrentUserAccount);
                             Internalaccount.Amount += depositedAmount;
@@ -138,7 +152,6 @@ namespace Bank
 
                     Console.WriteLine("Select user account you wish to deposit to");
                     string suser = Console.ReadLine();
-                    string BaseUser = currentUser;
                     if (currentUser == "admin" && suser == "admin")
                     {
                         Console.WriteLine("Invalid operation.Administrators cannot deposit to Internal Bank Account.");
@@ -162,10 +175,10 @@ namespace Bank
                     {
                         try
                         {
-                            var userToDeposit = btx.Users.SingleOrDefault(r => r.username == suser); //Create user for User account to deposit
-                            var accountToDeposit = btx.Accounts.SingleOrDefault(i => i.id == userToDeposit.id);
-                            var ActiveUser = btx.Users.SingleOrDefault(x => x.username == BaseUser); //Create user for Active user account
-                            var ActiveAccount = btx.Accounts.SingleOrDefault(y => y.id == ActiveUser.id);
+                            var userToDeposit = CreateUser(btx, suser);
+                            var accountToDeposit = CreateAccount(btx, suser);
+                            var ActiveUser = CreateUser(btx, currentUser);
+                            var ActiveAccount = CreateAccount(btx, currentUser);
                             do
                             {
                                 Console.Clear();
@@ -229,7 +242,6 @@ namespace Bank
 
                     Console.WriteLine("Select user account you wish to withdraw from");
                     string suser = Console.ReadLine();
-                    string BaseUser = currentUser;
                     if (currentUser == "admin" && suser == "admin")
                     {
                         Console.WriteLine("Invalid operation.Cannot withdraw from Internal Bank Account.");
@@ -241,10 +253,10 @@ namespace Bank
                     {
                         try
                         {
-                            var userToWithdrawFrom = btx.Users.SingleOrDefault(r => r.username == suser);
-                            var accountToWithdrawFrom = btx.Accounts.SingleOrDefault(i => i.id == userToWithdrawFrom.id);
-                            var ActiveUser = btx.Users.SingleOrDefault(x => x.username == BaseUser);
-                            var ActiveAccount = btx.Accounts.SingleOrDefault(y => y.id == ActiveUser.id);
+                            var userToWithdrawFrom = CreateUser(btx, suser);
+                            var accountToWithdrawFrom = CreateAccount(btx, suser);
+                            var ActiveUser = CreateUser(btx, currentUser);
+                            var ActiveAccount = CreateAccount(btx, currentUser);
                             do
                             {
                                 Console.Clear();
