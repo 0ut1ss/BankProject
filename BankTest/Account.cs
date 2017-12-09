@@ -22,6 +22,18 @@ namespace Bank
             transaction_date = new DateTime();
         }
 
+        public void DisplayAmount(Account account)
+        {
+            Console.OutputEncoding = Encoding.UTF8;
+            Console.WriteLine(account.Amount.ToString("C2", CultureInfo.CreateSpecificCulture("el-GR")));
+        }
+
+        public static string FormatAmount(decimal amount)
+        {
+            Console.OutputEncoding = Encoding.UTF8;
+            return amount.ToString("C2", CultureInfo.CreateSpecificCulture("el-GR"));
+        }
+
     }
 
     public class User
@@ -50,10 +62,9 @@ namespace Bank
         {
             using (BankContext btx = new BankContext())
             {
-                Console.OutputEncoding = Encoding.UTF8;
                 var user = CreateUser(btx, currentUser);
                 var account = CreateAccount(btx, currentUser);
-                Console.WriteLine(account.Amount.ToString("C2", CultureInfo.CreateSpecificCulture("el-GR")));
+                account.DisplayAmount(account);
             }
         }
         //View normal account balance as Admin
@@ -61,7 +72,6 @@ namespace Bank
         {
             using (BankContext btx = new BankContext())
             {
-                Console.OutputEncoding = Encoding.UTF8;
                 while (true)
                 {
                     Console.Clear();
@@ -78,7 +88,7 @@ namespace Bank
                         {
                             var user = CreateUser(btx, suser);
                             var account = CreateAccount(btx, suser);
-                            Console.WriteLine(account.Amount.ToString("C2", CultureInfo.CreateSpecificCulture("el-GR")));
+                            account.DisplayAmount(account);
                         }
                         break;
                     }
@@ -114,11 +124,10 @@ namespace Bank
                             btx.Accounts.Update(CurrentUserAccount);
                             Internalaccount.Amount += depositedAmount;
                             CurrentUserAccount.Amount -= depositedAmount;
-                            var formattedAmount = depositedAmount.ToString("C2", CultureInfo.CreateSpecificCulture("el-GR"));
-                            Console.WriteLine($"Successfully deposited {formattedAmount}");
+                            Console.WriteLine($"Successfully deposited {Account.FormatAmount(depositedAmount)}");
                             //Add action to Buffer List
                             FileAccess.AddToBuffer($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} " +
-                                $"{currentUser.ToUpper()} deposited {formattedAmount}" +
+                                $"{currentUser.ToUpper()} deposited {Account.FormatAmount(depositedAmount)}" +
                                 $" to the Internal Bank Account");
                             btx.SaveChanges();
                             break;
@@ -192,10 +201,9 @@ namespace Bank
                                         btx.Accounts.Update(ActiveAccount);
                                         accountToDeposit.Amount += depositedAmount;
                                         ActiveAccount.Amount -= depositedAmount;
-                                        var formattedAmount = depositedAmount.ToString("C2", CultureInfo.CreateSpecificCulture("el-GR"));
-                                        Console.WriteLine($"Successfully deposited {formattedAmount}");
+                                        Console.WriteLine($"Successfully deposited {Account.FormatAmount(depositedAmount)}");
                                         FileAccess.AddToBuffer($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} " +
-                                        $"{ActiveUser.username.ToUpper()} deposited {formattedAmount}" +
+                                        $"{ActiveUser.username.ToUpper()} deposited {Account.FormatAmount(depositedAmount)}" +
                                         $" to {userToDeposit.username.ToUpper()}");
                                         btx.SaveChanges();
                                         break;
@@ -238,7 +246,6 @@ namespace Bank
                 while (true)
                 {
                     Console.Clear();
-                    Console.OutputEncoding = Encoding.UTF8;
 
                     Console.WriteLine("Select user account you wish to withdraw from");
                     string suser = Console.ReadLine();
@@ -270,10 +277,9 @@ namespace Bank
                                         btx.Accounts.Update(ActiveAccount);
                                         accountToWithdrawFrom.Amount -= withdrawnAmount;
                                         ActiveAccount.Amount += withdrawnAmount;
-                                        var formattedAmount = withdrawnAmount.ToString("C2", CultureInfo.CreateSpecificCulture("el-GR"));
-                                        Console.WriteLine($"Successfully withdrawn {formattedAmount}");
+                                        Console.WriteLine($"Successfully withdrawn {Account.FormatAmount(withdrawnAmount)}");
                                         FileAccess.AddToBuffer($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} " +
-                                        $"{ActiveUser.username.ToUpper()} withdrew {withdrawnAmount.ToString("C2", CultureInfo.CreateSpecificCulture("el-GR"))}" +
+                                        $"{ActiveUser.username.ToUpper()} withdrew {Account.FormatAmount(withdrawnAmount)}" +
                                         $" from {userToWithdrawFrom.username.ToUpper()}");
                                         btx.SaveChanges();
                                         break;
