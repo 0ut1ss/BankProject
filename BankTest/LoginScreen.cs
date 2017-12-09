@@ -26,13 +26,13 @@ namespace Bank
                     if (IsUser && userName == "admin")
                     {
                         return userName;
-                        break;
+                        
                     }
 
                     else if (IsUser)
                     {
                         return userName;
-                        break;
+                        
                     }
                     else
                     {
@@ -44,7 +44,7 @@ namespace Bank
                 }
             }
                
-            return "";
+            
         }
     }
 }
