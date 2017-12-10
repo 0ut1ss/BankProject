@@ -65,6 +65,7 @@ namespace Bank
             {
                 while (true)
                 {
+
                     if(IsViewOtherAccount)
                     {
                         Console.Clear();
@@ -106,136 +107,128 @@ namespace Bank
             }
         }
 
-        public void DepositToInternal(string currentUser)
+
+        public void Deposit(string currentUser, bool depositToOther)
         {
             using (BankContext btx = new BankContext())
             {
                 while (true)
                 {
                     Console.Clear();
-                    Console.OutputEncoding = Encoding.UTF8;
-                    try
+                    //Deposit to other accounts
+                    if (depositToOther)
                     {
-                        Console.Write("Select the amount you wish to deposit:\n>");
-                        decimal depositedAmount = decimal.Parse(Console.ReadLine());
-                        if (depositedAmount >= 0)
+                        Console.WriteLine("Select user account you wish to deposit to");
+                        string suser = Console.ReadLine();
+                        if (currentUser == "admin" && suser == "admin")
                         {
-                            var Internalaccount = CreateAccount(btx, "admin");
-                            var user = CreateUser(btx, currentUser);
-                            var CurrentUserAccount = CreateAccount(btx, currentUser);
-                            btx.Accounts.Update(Internalaccount);
-                            btx.Accounts.Update(CurrentUserAccount);
-                            Internalaccount.Amount += depositedAmount;
-                            CurrentUserAccount.Amount -= depositedAmount;
-                            Console.WriteLine($"Successfully deposited {Account.FormatAmount(depositedAmount)}");
-                            //Add action to Buffer List
-                            FileAccess.AddToBuffer($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} " +
-                                $"{currentUser.ToUpper()} deposited {Account.FormatAmount(depositedAmount)}" +
-                                $" to the Internal Bank Account");
-                            btx.SaveChanges();
-                            break;
+                            Console.WriteLine("Invalid operation.Administrators cannot deposit to Internal Bank Account.");
+                            Console.ReadKey();
+                            continue;
+                        }
+                        else if (currentUser != "admin" && currentUser == suser && suser != "admin")//Check if user tries to deposit to themselves
+                        {
+                            Console.WriteLine("Invalid operation.Only deposit to other members allowed");
+                            Console.ReadKey();
+                            continue;
                         }
 
+                        else if (currentUser != "admin" && suser == "admin")//Check if user tries to deposit to Admin
+                        {
+                            Console.WriteLine("Invalid operation.Please use the Deposit to Internal Bank Account option.");
+                            Console.ReadKey();
+                            continue;
+                        }
                         else
                         {
-                            Console.WriteLine("Cannot deposit negative amounts");
-                            Console.ReadKey();
+                            try
+                            {
+                                var userToDeposit = CreateUser(btx, suser);
+                                var accountToDeposit = CreateAccount(btx, suser);
+                                var ActiveUser = CreateUser(btx, currentUser);
+                                var ActiveAccount = CreateAccount(btx, currentUser);
+                                do
+                                {
+                                    Console.Clear();
+                                    try
+                                    {
+                                        Console.Write("Select the amount you wish to deposit:\n>");
+                                        decimal depositedAmount = decimal.Parse(Console.ReadLine());
+                                        if (depositedAmount >= 0)
+                                        {
+                                            btx.Accounts.Update(accountToDeposit);
+                                            btx.Accounts.Update(ActiveAccount);
+                                            accountToDeposit.Amount += depositedAmount;
+                                            ActiveAccount.Amount -= depositedAmount;
+                                            Console.WriteLine($"Successfully deposited {Account.FormatAmount(depositedAmount)}");
+                                            FileAccess.AddToBuffer($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} " +
+                                            $"{ActiveUser.username.ToUpper()} deposited {Account.FormatAmount(depositedAmount)}" +
+                                            $" to {userToDeposit.username.ToUpper()}");
+                                            btx.SaveChanges();
+                                            break;
+                                        }
+
+                                        else
+                                        {
+                                            Console.WriteLine("Cannot deposit negative amounts");
+                                            Console.ReadKey();
+                                            continue;
+                                        }
+
+                                    }
+                                    catch (Exception)
+                                    {
+                                        Console.WriteLine("Invalid entry, please retype the amount");
+                                        Console.ReadKey();
+                                    }
+                                } while (true);
+
+                                break;
+                            }
+                            catch (Exception)
+                            {
+                                Console.WriteLine("Invalid entry, user does not exist");
+                                Console.ReadKey();
+                            }
                         }
                     }
-                    catch (Exception)
-                    {
-                        Console.WriteLine("This is not a valid entry.Please try again.");
-                        Console.ReadKey();
-                    }
-
-                }
-
-            }
-        }
-        //Deposit to other accounts
-        public void Deposit(string currentUser)
-        {
-            using (BankContext btx = new BankContext())
-            {
-                while (true)
-                {
-                    Console.Clear();
-                    Console.OutputEncoding = Encoding.UTF8;
-
-                    Console.WriteLine("Select user account you wish to deposit to");
-                    string suser = Console.ReadLine();
-                    if (currentUser == "admin" && suser == "admin")
-                    {
-                        Console.WriteLine("Invalid operation.Administrators cannot deposit to Internal Bank Account.");
-                        Console.ReadKey();
-                        continue;
-                    }
-                    else if (currentUser != "admin" && currentUser == suser && suser != "admin")//Check if user tries to deposit to themselves
-                    {
-                        Console.WriteLine("Invalid operation.Only deposit to other members allowed");
-                        Console.ReadKey();
-                        continue;
-                    }
-
-                    else if (currentUser != "admin" && suser == "admin")//Check if user tries to deposit to Admin
-                    {
-                        Console.WriteLine("Invalid operation.Please use the Deposit to Internal Bank Account option.");
-                        Console.ReadKey();
-                        continue;
-                    }
+                    //Deposit to Internal
                     else
                     {
                         try
                         {
-                            var userToDeposit = CreateUser(btx, suser);
-                            var accountToDeposit = CreateAccount(btx, suser);
-                            var ActiveUser = CreateUser(btx, currentUser);
-                            var ActiveAccount = CreateAccount(btx, currentUser);
-                            do
+                            Console.Write("Select the amount you wish to deposit:\n>");
+                            decimal depositedAmount = decimal.Parse(Console.ReadLine());
+                            if (depositedAmount >= 0)
                             {
-                                Console.Clear();
-                                try
-                                {
-                                    Console.Write("Select the amount you wish to deposit:\n>");
-                                    decimal depositedAmount = decimal.Parse(Console.ReadLine());
-                                    if (depositedAmount >= 0)
-                                    {
-                                        btx.Accounts.Update(accountToDeposit);
-                                        btx.Accounts.Update(ActiveAccount);
-                                        accountToDeposit.Amount += depositedAmount;
-                                        ActiveAccount.Amount -= depositedAmount;
-                                        Console.WriteLine($"Successfully deposited {Account.FormatAmount(depositedAmount)}");
-                                        FileAccess.AddToBuffer($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} " +
-                                        $"{ActiveUser.username.ToUpper()} deposited {Account.FormatAmount(depositedAmount)}" +
-                                        $" to {userToDeposit.username.ToUpper()}");
-                                        btx.SaveChanges();
-                                        break;
-                                    }
+                                var Internalaccount = CreateAccount(btx, "admin");
+                                var user = CreateUser(btx, currentUser);
+                                var CurrentUserAccount = CreateAccount(btx, currentUser);
+                                btx.Accounts.Update(Internalaccount);
+                                btx.Accounts.Update(CurrentUserAccount);
+                                Internalaccount.Amount += depositedAmount;
+                                CurrentUserAccount.Amount -= depositedAmount;
+                                Console.WriteLine($"Successfully deposited {Account.FormatAmount(depositedAmount)}");
+                                //Add action to Buffer List
+                                FileAccess.AddToBuffer($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} " +
+                                    $"{currentUser.ToUpper()} deposited {Account.FormatAmount(depositedAmount)}" +
+                                    $" to the Internal Bank Account");
+                                btx.SaveChanges();
+                                break;
+                            }
 
-                                    else
-                                    {
-                                        Console.WriteLine("Cannot deposit negative amounts");
-                                        Console.ReadKey();
-                                        continue;
-                                    }
-
-                                }
-                                catch (Exception)
-                                {
-                                    Console.WriteLine("Invalid entry, please retype the amount");
-                                    Console.ReadKey();
-                                }
-                            } while (true);
-
-                            break;
+                            else
+                            {
+                                Console.WriteLine("Cannot deposit negative amounts");
+                                Console.ReadKey();
+                            }
                         }
                         catch (Exception)
                         {
-                            Console.WriteLine("Invalid entry, user does not exist");
+                            Console.WriteLine("This is not a valid entry.Please try again.");
                             Console.ReadKey();
                         }
                     }
-
 
                 }
             }
@@ -320,7 +313,7 @@ namespace Bank
 
         public void ExitApp()
         {
-            Console.WriteLine("Have a nice Day");
+            Console.WriteLine("Have a nice Day.");
         }
     }
 }

@@ -1,2 +1,0 @@
-2017-12-09 09:34:55 USER1 deposited 50,00 € to the Internal Bank Account
-2017-12-09 09:35:15 USER1 deposited 50,00 € to USER2

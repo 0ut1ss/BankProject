@@ -50,13 +50,13 @@ namespace Bank
 
                             else
                             {
-                                User.DepositToInternal(_userCredentials);
+                                User.Deposit(_userCredentials, false);
 
                             }
                             break;
 
                         case 3:
-                            User.Deposit(_userCredentials);
+                            User.Deposit(_userCredentials, true);
                             break;
 
                         case 4:
