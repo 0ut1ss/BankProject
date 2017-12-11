@@ -154,7 +154,7 @@ namespace Bank
                                     {
                                         Console.Write("Select the amount you wish to deposit:\n>");
                                         decimal depositedAmount = decimal.Parse(Console.ReadLine());
-                                        if (depositedAmount >= 0)
+                                        if (depositedAmount >= 0 && ActiveAccount.Amount>= depositedAmount)
                                         {
                                             btx.Accounts.Update(accountToDeposit);
                                             btx.Accounts.Update(ActiveAccount);
@@ -170,7 +170,7 @@ namespace Bank
 
                                         else
                                         {
-                                            Console.WriteLine("Cannot deposit negative amounts");
+                                            Console.WriteLine("Invalid entry, please retype the amount");
                                             Console.ReadKey();
                                             continue;
                                         }
@@ -178,7 +178,7 @@ namespace Bank
                                     }
                                     catch (Exception)
                                     {
-                                        Console.WriteLine("Invalid entry, please retype the amount");
+                                        Console.WriteLine("This is not a valid entry.Please try again.");
                                         Console.ReadKey();
                                     }
                                 } while (true);
@@ -197,13 +197,13 @@ namespace Bank
                     {
                         try
                         {
+                            var Internalaccount = CreateAccount(btx, "admin");
+                            var user = CreateUser(btx, currentUser);
+                            var CurrentUserAccount = CreateAccount(btx, currentUser);
                             Console.Write("Select the amount you wish to deposit:\n>");
                             decimal depositedAmount = decimal.Parse(Console.ReadLine());
-                            if (depositedAmount >= 0)
+                            if (depositedAmount >= 0 && CurrentUserAccount.Amount >= depositedAmount)
                             {
-                                var Internalaccount = CreateAccount(btx, "admin");
-                                var user = CreateUser(btx, currentUser);
-                                var CurrentUserAccount = CreateAccount(btx, currentUser);
                                 btx.Accounts.Update(Internalaccount);
                                 btx.Accounts.Update(CurrentUserAccount);
                                 Internalaccount.Amount += depositedAmount;
@@ -219,7 +219,7 @@ namespace Bank
 
                             else
                             {
-                                Console.WriteLine("Cannot deposit negative amounts");
+                                Console.WriteLine("Invalid entry, please retype the amount");
                                 Console.ReadKey();
                             }
                         }
@@ -267,7 +267,7 @@ namespace Bank
                                 {
                                     Console.Write("Select the amount you wish to withdraw:\n>");
                                     decimal withdrawnAmount = decimal.Parse(Console.ReadLine());
-                                    if (withdrawnAmount >= 0)
+                                    if (withdrawnAmount >= 0 && accountToWithdrawFrom.Amount>= withdrawnAmount)
                                     {
                                         btx.Accounts.Update(accountToWithdrawFrom);
                                         btx.Accounts.Update(ActiveAccount);
@@ -283,7 +283,7 @@ namespace Bank
 
                                     else
                                     {
-                                        Console.WriteLine("Cannot withdraw negative amounts");
+                                        Console.WriteLine("Invalid amount, please try again");
                                         Console.ReadKey();
                                         continue;
                                     }
@@ -291,7 +291,7 @@ namespace Bank
                                 }
                                 catch (Exception)
                                 {
-                                    Console.WriteLine("Invalid entry, please retype the amount");
+                                    Console.WriteLine("This is not a valid entry.Please try again.");
                                     Console.ReadKey();
                                 }
                             } while (true);
