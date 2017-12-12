@@ -208,6 +208,8 @@ namespace Bank
                                 btx.Accounts.Update(CurrentUserAccount);
                                 Internalaccount.Amount += depositedAmount;
                                 CurrentUserAccount.Amount -= depositedAmount;
+                                Internalaccount.transaction_date = DateTime.Now;
+                                CurrentUserAccount.transaction_date = DateTime.Now;
                                 Console.WriteLine($"Successfully deposited {Account.FormatAmount(depositedAmount)}");
                                 //Add action to Buffer List
                                 FileAccess.AddToBuffer($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} " +
