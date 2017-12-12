@@ -160,6 +160,8 @@ namespace Bank
                                             btx.Accounts.Update(ActiveAccount);
                                             accountToDeposit.Amount += depositedAmount;
                                             ActiveAccount.Amount -= depositedAmount;
+                                            ActiveAccount.transaction_date = DateTime.Now;
+                                            accountToDeposit.transaction_date = DateTime.Now;
                                             Console.WriteLine($"Successfully deposited {Account.FormatAmount(depositedAmount)}");
                                             FileAccess.AddToBuffer($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} " +
                                             $"{ActiveUser.username.ToUpper()} deposited {Account.FormatAmount(depositedAmount)}" +
@@ -275,6 +277,8 @@ namespace Bank
                                         btx.Accounts.Update(ActiveAccount);
                                         accountToWithdrawFrom.Amount -= withdrawnAmount;
                                         ActiveAccount.Amount += withdrawnAmount;
+                                        accountToWithdrawFrom.transaction_date = DateTime.Now;
+                                        ActiveAccount.transaction_date = DateTime.Now;
                                         Console.WriteLine($"Successfully withdrawn {Account.FormatAmount(withdrawnAmount)}");
                                         FileAccess.AddToBuffer($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} " +
                                         $"{ActiveUser.username.ToUpper()} withdrew {Account.FormatAmount(withdrawnAmount)}" +
