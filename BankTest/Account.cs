@@ -40,6 +40,27 @@ namespace Bank
             btc.Accounts.Update(secondaryAccount);
         }
 
+        public static void UpdateTime(Account primaryAccount, Account secondaryAccount)
+        {
+            primaryAccount.transaction_date = DateTime.Now;
+            secondaryAccount.transaction_date = DateTime.Now;
+        }
+
+        public static void UpdateAmount(Account primaryAccount, Account secondaryAccount,decimal amount, bool isDeposit)
+        {
+            if(isDeposit)
+            {
+                secondaryAccount.Amount += amount;
+                primaryAccount.Amount -= amount;
+            }
+
+            else
+            {
+                secondaryAccount.Amount -= amount;
+                primaryAccount.Amount += amount;
+            }
+        }
+
     }
 
     public class User
@@ -163,10 +184,8 @@ namespace Bank
                                         if (depositedAmount >= 0 && ActiveAccount.Amount>= depositedAmount)
                                         {
                                             Account.UpdateAccounts(ActiveAccount, accountToDeposit, btx);
-                                            accountToDeposit.Amount += depositedAmount;
-                                            ActiveAccount.Amount -= depositedAmount;
-                                            ActiveAccount.transaction_date = DateTime.Now;
-                                            accountToDeposit.transaction_date = DateTime.Now;
+                                            Account.UpdateAmount(ActiveAccount, accountToDeposit, depositedAmount, true);
+                                            Account.UpdateTime(ActiveAccount, accountToDeposit);
                                             Console.WriteLine($"Successfully deposited {Account.FormatAmount(depositedAmount)}");
                                             FileAccess.AddToBuffer($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} " +
                                             $"{ActiveUser.username.ToUpper()} deposited {Account.FormatAmount(depositedAmount)}" +
@@ -212,10 +231,8 @@ namespace Bank
                             if (depositedAmount >= 0 && CurrentUserAccount.Amount >= depositedAmount)
                             {
                                 Account.UpdateAccounts(CurrentUserAccount, Internalaccount, btx);
-                                Internalaccount.Amount += depositedAmount;
-                                CurrentUserAccount.Amount -= depositedAmount;
-                                Internalaccount.transaction_date = DateTime.Now;
-                                CurrentUserAccount.transaction_date = DateTime.Now;
+                                Account.UpdateAmount(CurrentUserAccount, Internalaccount, depositedAmount, true);
+                                Account.UpdateTime(CurrentUserAccount, Internalaccount);
                                 Console.WriteLine($"Successfully deposited {Account.FormatAmount(depositedAmount)}");
                                 //Add action to Buffer List
                                 FileAccess.AddToBuffer($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} " +
@@ -278,10 +295,8 @@ namespace Bank
                                     if (withdrawnAmount >= 0 && accountToWithdrawFrom.Amount>= withdrawnAmount)
                                     {
                                         Account.UpdateAccounts(ActiveAccount, accountToWithdrawFrom, btx);
-                                        accountToWithdrawFrom.Amount -= withdrawnAmount;
-                                        ActiveAccount.Amount += withdrawnAmount;
-                                        accountToWithdrawFrom.transaction_date = DateTime.Now;
-                                        ActiveAccount.transaction_date = DateTime.Now;
+                                        Account.UpdateAmount(ActiveAccount, accountToWithdrawFrom, withdrawnAmount, false);
+                                        Account.UpdateTime(ActiveAccount, accountToWithdrawFrom);
                                         Console.WriteLine($"Successfully withdrawn {Account.FormatAmount(withdrawnAmount)}");
                                         FileAccess.AddToBuffer($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} " +
                                         $"{ActiveUser.username.ToUpper()} withdrew {Account.FormatAmount(withdrawnAmount)}" +
