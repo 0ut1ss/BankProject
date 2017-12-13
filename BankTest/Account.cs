@@ -34,6 +34,12 @@ namespace Bank
             return amount.ToString("C2", CultureInfo.CreateSpecificCulture("el-GR"));
         }
 
+        public static void UpdateAccounts(Account primaryAccount, Account secondaryAccount, BankContext btc)
+        {
+            btc.Accounts.Update(primaryAccount);
+            btc.Accounts.Update(secondaryAccount);
+        }
+
     }
 
     public class User
@@ -156,8 +162,7 @@ namespace Bank
                                         decimal depositedAmount = decimal.Parse(Console.ReadLine());
                                         if (depositedAmount >= 0 && ActiveAccount.Amount>= depositedAmount)
                                         {
-                                            btx.Accounts.Update(accountToDeposit);
-                                            btx.Accounts.Update(ActiveAccount);
+                                            Account.UpdateAccounts(ActiveAccount, accountToDeposit, btx);
                                             accountToDeposit.Amount += depositedAmount;
                                             ActiveAccount.Amount -= depositedAmount;
                                             ActiveAccount.transaction_date = DateTime.Now;
@@ -206,8 +211,7 @@ namespace Bank
                             decimal depositedAmount = decimal.Parse(Console.ReadLine());
                             if (depositedAmount >= 0 && CurrentUserAccount.Amount >= depositedAmount)
                             {
-                                btx.Accounts.Update(Internalaccount);
-                                btx.Accounts.Update(CurrentUserAccount);
+                                Account.UpdateAccounts(CurrentUserAccount, Internalaccount, btx);
                                 Internalaccount.Amount += depositedAmount;
                                 CurrentUserAccount.Amount -= depositedAmount;
                                 Internalaccount.transaction_date = DateTime.Now;
@@ -273,8 +277,7 @@ namespace Bank
                                     decimal withdrawnAmount = decimal.Parse(Console.ReadLine());
                                     if (withdrawnAmount >= 0 && accountToWithdrawFrom.Amount>= withdrawnAmount)
                                     {
-                                        btx.Accounts.Update(accountToWithdrawFrom);
-                                        btx.Accounts.Update(ActiveAccount);
+                                        Account.UpdateAccounts(ActiveAccount, accountToWithdrawFrom, btx);
                                         accountToWithdrawFrom.Amount -= withdrawnAmount;
                                         ActiveAccount.Amount += withdrawnAmount;
                                         accountToWithdrawFrom.transaction_date = DateTime.Now;
