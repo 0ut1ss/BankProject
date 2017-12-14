@@ -9,8 +9,8 @@ namespace Bank
     {
         static void Main(string[] args)
         {
-            Menu m = new Menu();
-            m.DisplayMenu();
+            LoginScreen lg = new LoginScreen();
+            lg.Login();
 
         }
     }

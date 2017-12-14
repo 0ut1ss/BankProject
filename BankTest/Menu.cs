@@ -6,12 +6,9 @@ namespace Bank
 {
     public class Menu
     {
-        private string _userCredentials;
-        public void DisplayMenu()
+        public void DisplayMenu(User user)
         {
-            LoginScreen Lg = new LoginScreen();
-            _userCredentials = Lg.Login();
-            User User = new User();
+
             int menuInput = 0;
 
 
@@ -20,8 +17,8 @@ namespace Bank
 
                 try
                 {
-                    Console.WriteLine($"WELCOME {_userCredentials.ToUpper()}\n");
-                    if (_userCredentials == "admin")
+                    Console.WriteLine($"WELCOME {user.username.ToUpper()}\n");
+                    if (user.username == "admin")
                     {
                         Console.Write("1.View Internal Bank Account\n\n2.View Member Bank Account" +
                                 "\n\n3.Deposit to Member Account\n\n4.Withdraw from Member Account\n\n5.Store today's Transactions\n\n6.Exit\n>");
@@ -42,43 +39,43 @@ namespace Bank
                         case 1:
                             {
                                 //ViewOtherAccount is false, Viebalance for normal users
-                                User.ViewBalance(_userCredentials, false);
+                                user.ViewBalance(user.username, false);
                             }
                             break;
                         case 2:
 
                             //If user is Admin ViewOtherAccount is true, displays options for admin
-                            if (_userCredentials == "admin")
+                            if (user.username == "admin")
                             {
-                                User.ViewBalance(_userCredentials, true);
+                                user.ViewBalance(user.username, true);
                             }
 
                             //Set to false means users deposit to the internal bank account
                             else
                             {
-                                User.Deposit(_userCredentials, false);
+                                user.Deposit(user.username, false);
 
                             }
                             break;
 
                             //Set to true means current user chooses account to deposit
                         case 3:
-                            User.Deposit(_userCredentials, true);
+                            user.Deposit(user.username, true);
                             break;
 
 
 
                         case 4:
                             //If user is admin, withdraw function is called
-                            if (_userCredentials == "admin")
+                            if (user.username == "admin")
                             {
-                                User.Withdraw(_userCredentials);
+                                user.Withdraw(user.username);
                             }
 
                             //if normal user, statement file is written
                             else
                             {
-                                FileAccess.WriteToFile(_userCredentials);
+                                FileAccess.WriteToFile(user.username);
 
                             }
                             break;
@@ -86,23 +83,24 @@ namespace Bank
                         case 5:
 
                             //if admin, statement file is written
-                            if (_userCredentials == "admin")
+                            if (user.username == "admin")
                             {
-                                FileAccess.WriteToFile(_userCredentials);
+                                FileAccess.WriteToFile(user.username);
                             }
 
                             else
                             {
                                 //if not admin menuInput is set to 6, so application terminates automatically
-                                User.ExitApp();
+                                user.ExitApp();
                                 menuInput = 6;
                             }
                             break;
 
                         case 6:
-                            if (_userCredentials == "admin")
+                            if (user.username == "admin")
                             {
-                                User.ExitApp();
+                                user.ExitApp();
+                                
                             }
 
                             else
