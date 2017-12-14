@@ -20,20 +20,19 @@ namespace Bank
 
                     Console.Write("enter your password:\n>");
                     string pWd = Console.ReadLine();
+
+                    //Check to see if user exists in the database
                     bool IsUser = btx.Users.Any(r => r.username == userName && r.password == pWd);
                     Console.Clear();
 
-                    if (IsUser && userName == "admin")
+
+                    
+                    if (IsUser)
                     {
                         return userName;
                         
                     }
 
-                    else if (IsUser)
-                    {
-                        return userName;
-                        
-                    }
                     else
                     {
                         Console.WriteLine("Invalid username or password");

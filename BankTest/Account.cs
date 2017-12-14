@@ -17,28 +17,34 @@ namespace Bank
         public DateTime transaction_date { get; set; }
         public decimal Amount { get; set; }
 
+        //Initialize transaction_date
         public Account()
         {
             transaction_date = new DateTime();
         }
 
+        //Print account amount to console with the correct format
         public void DisplayAmount(Account account)
         {
             Console.OutputEncoding = Encoding.UTF8;
             Console.WriteLine(account.Amount.ToString("C2", CultureInfo.CreateSpecificCulture("el-GR")));
         }
 
+        //Format amount to display correctly
         public static string FormatAmount(decimal amount)
         {
             Console.OutputEncoding = Encoding.UTF8;
             return amount.ToString("C2", CultureInfo.CreateSpecificCulture("el-GR"));
         }
 
+
+        
         public static void UpdateAccounts(Account primaryAccount, Account secondaryAccount, BankContext btc)
         {
             btc.Accounts.Update(primaryAccount);
             btc.Accounts.Update(secondaryAccount);
         }
+
 
         public static void UpdateTime(Account primaryAccount, Account secondaryAccount)
         {
@@ -46,6 +52,7 @@ namespace Bank
             secondaryAccount.transaction_date = DateTime.Now;
         }
 
+        //Update users Bank account amounts, using boolean to determine if the method is deposit or withdraw
         public static void UpdateAmount(Account primaryAccount, Account secondaryAccount,decimal amount, bool isDeposit)
         {
             if(isDeposit)
@@ -61,6 +68,7 @@ namespace Bank
             }
         }
 
+
     }
 
     public class User
@@ -70,6 +78,7 @@ namespace Bank
         public string username { get; set; }
         public string password { get; set; }
 
+        //Initialize user
         public User CreateUser(BankContext btc, string xuser)
         {
             var user = new User();
@@ -77,6 +86,8 @@ namespace Bank
             
         }
 
+
+        //Initialize Account
         public Account CreateAccount(BankContext btc, string user)
         {
             var Account = new Account();
@@ -86,13 +97,14 @@ namespace Bank
         }
 
 
+
         public void ViewBalance(string currentUser, bool IsViewOtherAccount)
         {
             using (BankContext btx = new BankContext())
             {
                 while (true)
                 {
-
+                    //If true displays the options for the admin
                     if(IsViewOtherAccount)
                     {
                         Console.Clear();
@@ -100,12 +112,13 @@ namespace Bank
                         string suser = Console.ReadLine();
                         try
                         {
+                            //If the active user is admin and the selected user is admin, user is prompted to use another option
                             if (suser == "admin")
                             {
                                 Console.WriteLine("To view the Internal Bank Account Balance, please select option number 1");
                                 
                             }
-
+                            //View Balance of other users as admin
                             else
                             {
                                 var user = CreateUser(btx, suser);
@@ -120,7 +133,7 @@ namespace Bank
                             Console.ReadKey();
                         }
                     }
-
+                    //false displays the accounts for normal users
                     else
                     {
                         var user = CreateUser(btx, currentUser);
@@ -142,25 +155,30 @@ namespace Bank
                 while (true)
                 {
                     Console.Clear();
-                    //Deposit to other accounts
+                    //True equals to  despositing to other accounts and not to internal
                     if (depositToOther)
                     {
                         Console.WriteLine("Select user account you wish to deposit to");
                         string suser = Console.ReadLine();
+
+                        //Checks to determine if admin tries to deposit to the internal
                         if (currentUser == "admin" && suser == "admin")
                         {
                             Console.WriteLine("Invalid operation.Administrators cannot deposit to Internal Bank Account.");
                             Console.ReadKey();
                             continue;
                         }
-                        else if (currentUser != "admin" && currentUser == suser && suser != "admin")//Check if user tries to deposit to themselves
+
+                        //Checks to determine if user tries to deposit to themselves
+                        else if (currentUser != "admin" && currentUser == suser && suser != "admin")
                         {
                             Console.WriteLine("Invalid operation.Only deposit to other members allowed");
                             Console.ReadKey();
                             continue;
                         }
 
-                        else if (currentUser != "admin" && suser == "admin")//Check if user tries to deposit to Admin
+                        //Checks to determine if user tries to deposit to internal
+                        else if (currentUser != "admin" && suser == "admin")
                         {
                             Console.WriteLine("Invalid operation.Please use the Deposit to Internal Bank Account option.");
                             Console.ReadKey();
@@ -181,12 +199,17 @@ namespace Bank
                                     {
                                         Console.Write("Select the amount you wish to deposit:\n>");
                                         decimal depositedAmount = decimal.Parse(Console.ReadLine());
+
+                                        //Checks for negative amount entries and if tge active user has sufficient money to make the deposit
                                         if (depositedAmount >= 0 && ActiveAccount.Amount>= depositedAmount)
                                         {
                                             Account.UpdateAccounts(ActiveAccount, accountToDeposit, btx);
                                             Account.UpdateAmount(ActiveAccount, accountToDeposit, depositedAmount, true);
                                             Account.UpdateTime(ActiveAccount, accountToDeposit);
+
                                             Console.WriteLine($"Successfully deposited {Account.FormatAmount(depositedAmount)}");
+
+                                            //Adds transaction to buffer
                                             FileAccess.AddToBuffer($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} " +
                                             $"{ActiveUser.username.ToUpper()} deposited {Account.FormatAmount(depositedAmount)}" +
                                             $" to {userToDeposit.username.ToUpper()}");
@@ -224,17 +247,24 @@ namespace Bank
                         try
                         {
                             var Internalaccount = CreateAccount(btx, "admin");
+
                             var user = CreateUser(btx, currentUser);
                             var CurrentUserAccount = CreateAccount(btx, currentUser);
+
                             Console.Write("Select the amount you wish to deposit:\n>");
+
                             decimal depositedAmount = decimal.Parse(Console.ReadLine());
+
+                            //Checks for negative amount entries and if tge active user has sufficient money to make the deposit
                             if (depositedAmount >= 0 && CurrentUserAccount.Amount >= depositedAmount)
                             {
                                 Account.UpdateAccounts(CurrentUserAccount, Internalaccount, btx);
                                 Account.UpdateAmount(CurrentUserAccount, Internalaccount, depositedAmount, true);
                                 Account.UpdateTime(CurrentUserAccount, Internalaccount);
+
                                 Console.WriteLine($"Successfully deposited {Account.FormatAmount(depositedAmount)}");
-                                //Add action to Buffer List
+                               
+                                //Adds transaction to buffer
                                 FileAccess.AddToBuffer($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} " +
                                     $"{currentUser.ToUpper()} deposited {Account.FormatAmount(depositedAmount)}" +
                                     $" to the Internal Bank Account");
@@ -259,7 +289,7 @@ namespace Bank
             }
             
         }
-        //Withdraws funds from users, adds them to internal bank account
+        //Admin withdraws funds from users, adds them to internal bank account
         public void Withdraw(string currentUser)
         {
             using (BankContext btx = new BankContext())
@@ -270,12 +300,15 @@ namespace Bank
 
                     Console.WriteLine("Select user account you wish to withdraw from");
                     string suser = Console.ReadLine();
+
+                    //Checks to see if admin tries to withdraw from the internal bank account
                     if (currentUser == "admin" && suser == "admin")
                     {
                         Console.WriteLine("Invalid operation.Cannot withdraw from Internal Bank Account.");
                         Console.ReadKey();
                         continue;
                     }
+
 
                     else
                     {
@@ -292,12 +325,17 @@ namespace Bank
                                 {
                                     Console.Write("Select the amount you wish to withdraw:\n>");
                                     decimal withdrawnAmount = decimal.Parse(Console.ReadLine());
+
+                                    //Checks for negative amount entries and if the normal user has more money than the requested amount
                                     if (withdrawnAmount >= 0 && accountToWithdrawFrom.Amount>= withdrawnAmount)
                                     {
                                         Account.UpdateAccounts(ActiveAccount, accountToWithdrawFrom, btx);
                                         Account.UpdateAmount(ActiveAccount, accountToWithdrawFrom, withdrawnAmount, false);
                                         Account.UpdateTime(ActiveAccount, accountToWithdrawFrom);
+
                                         Console.WriteLine($"Successfully withdrawn {Account.FormatAmount(withdrawnAmount)}");
+
+                                        //Add transaction to buffer
                                         FileAccess.AddToBuffer($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} " +
                                         $"{ActiveUser.username.ToUpper()} withdrew {Account.FormatAmount(withdrawnAmount)}" +
                                         $" from {userToWithdrawFrom.username.ToUpper()}");
