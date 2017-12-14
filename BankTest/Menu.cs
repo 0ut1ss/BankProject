@@ -104,6 +104,13 @@ namespace Bank
                             {
                                 User.ExitApp();
                             }
+
+                            else
+                            {
+                                //If not admin display error message and set menu item to an invalid number
+                                Console.WriteLine("Invalid input, please try again!");
+                                menuInput = 100;
+                            }
                             break;
                         default:
                             {
