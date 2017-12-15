@@ -78,6 +78,23 @@ namespace Bank
         public string username { get; set; }
         public string password { get; set; }
 
+        //Overriding the ToString Method
+        public override string ToString()
+        {
+            using (BankContext btx = new BankContext())
+            {
+                var account = btx.Accounts.SingleOrDefault(i => i.id == id);
+                return ToString(account);
+            }
+
+        }
+        //Helper method for the override
+        public String ToString(Account account)
+        {
+            var dt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.FFF");
+            return $"{username}, {dt}, {account.Amount}";
+        }
+
         //Initialize user
         public User CreateUser(BankContext btc, string xuser)
         {
@@ -207,7 +224,7 @@ namespace Bank
                                             Account.UpdateAmount(ActiveAccount, accountToDeposit, depositedAmount, true);
                                             Account.UpdateTime(ActiveAccount, accountToDeposit);
 
-                                            Console.WriteLine($"Successfully deposited {Account.FormatAmount(depositedAmount)}");
+                                            Console.WriteLine($"Successfully deposited {Account.FormatAmount(depositedAmount)}\nACCOUNT DETAILS:\n{ActiveUser.ToString()}");
 
                                             //Adds transaction to buffer
                                             FileAccess.AddToBuffer($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} " +
@@ -262,7 +279,7 @@ namespace Bank
                                 Account.UpdateAmount(CurrentUserAccount, Internalaccount, depositedAmount, true);
                                 Account.UpdateTime(CurrentUserAccount, Internalaccount);
 
-                                Console.WriteLine($"Successfully deposited {Account.FormatAmount(depositedAmount)}");
+                                Console.WriteLine($"Successfully deposited {Account.FormatAmount(depositedAmount)}\nACCOUNT DETAILS:\n{currentUser.ToString()}");
                                
                                 //Adds transaction to buffer
                                 FileAccess.AddToBuffer($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} " +
@@ -333,7 +350,7 @@ namespace Bank
                                         Account.UpdateAmount(ActiveAccount, accountToWithdrawFrom, withdrawnAmount, false);
                                         Account.UpdateTime(ActiveAccount, accountToWithdrawFrom);
 
-                                        Console.WriteLine($"Successfully withdrawn {Account.FormatAmount(withdrawnAmount)}");
+                                        Console.WriteLine($"Successfully withdrawn {Account.FormatAmount(withdrawnAmount)}\nACCOUNT DETAILS:\n{ActiveUser.ToString()}");
 
                                         //Add transaction to buffer
                                         FileAccess.AddToBuffer($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} " +
