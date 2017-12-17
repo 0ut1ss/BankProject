@@ -294,6 +294,7 @@ namespace Bank
                         try
                         {
                             var Internalaccount = CreateAccount(btx, "admin");
+                            var InternalUser = CreateUser(btx, "admin");
                             var user = CreateUser(btx, currentUser);
                             var CurrentUserAccount = CreateAccount(btx, currentUser);
 
@@ -301,7 +302,7 @@ namespace Bank
 
                             decimal depositedAmount = decimal.Parse(Console.ReadLine());
 
-                            //Checks for negative amount entries and if tge active user has sufficient money to make the deposit
+                            //Checks for negative amount entries and if the active user has sufficient money to make the deposit
                             if (depositedAmount >= 0 && CurrentUserAccount.Amount >= depositedAmount)
                             {
                                 Account.UpdateAccounts(CurrentUserAccount, Internalaccount, btx);
@@ -312,7 +313,7 @@ namespace Bank
                                 Console.WriteLine($"Successfully deposited {Account.FormatAmount(depositedAmount)}");
 
                                 //Adds transaction to buffer
-                                FileAccess.AddToBuffer(GenerateReport(user, depositedAmount, null, true, true));
+                                FileAccess.AddToBuffer(GenerateReport(user, depositedAmount, InternalUser, false, true));
                                 btx.SaveChanges();
                                 break;
                             }

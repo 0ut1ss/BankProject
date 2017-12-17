@@ -18,7 +18,7 @@ namespace Bank
                     Console.Write("enter your user name:\n>");
                     string userName = Console.ReadLine();
 
-
+                    
                     Console.Write("enter your password:\n>");
                     string pWd = Console.ReadLine();
 
