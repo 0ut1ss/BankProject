@@ -249,7 +249,7 @@ namespace Bank
                                         decimal depositedAmount = decimal.Parse(Console.ReadLine());
 
                                         //Checks for negative amount entries and if the active user has sufficient money to make the deposit
-                                        if (depositedAmount >= 0 && ActiveAccount.Amount >= depositedAmount)
+                                        if (depositedAmount > 0 && ActiveAccount.Amount >= depositedAmount)
                                         {
                                             Account.UpdateAccounts(ActiveAccount, accountToDeposit, btx);
                                             Account.UpdateAmount(ActiveAccount, accountToDeposit, depositedAmount, true);
@@ -303,7 +303,7 @@ namespace Bank
                             decimal depositedAmount = decimal.Parse(Console.ReadLine());
 
                             //Checks for negative amount entries and if the active user has sufficient money to make the deposit
-                            if (depositedAmount >= 0 && CurrentUserAccount.Amount >= depositedAmount)
+                            if (depositedAmount > 0 && CurrentUserAccount.Amount >= depositedAmount)
                             {
                                 Account.UpdateAccounts(CurrentUserAccount, Internalaccount, btx);
                                 Account.UpdateAmount(CurrentUserAccount, Internalaccount, depositedAmount, true);
@@ -373,7 +373,7 @@ namespace Bank
                                     decimal withdrawnAmount = decimal.Parse(Console.ReadLine());
 
                                     //Checks for negative amount entries and if the normal user has more money than the requested amount
-                                    if (withdrawnAmount >= 0 && accountToWithdrawFrom.Amount >= withdrawnAmount)
+                                    if (withdrawnAmount > 0 && accountToWithdrawFrom.Amount >= withdrawnAmount)
                                     {
                                         Account.UpdateAccounts(ActiveAccount, accountToWithdrawFrom, btx);
                                         Account.UpdateAmount(ActiveAccount, accountToWithdrawFrom, withdrawnAmount, false);
