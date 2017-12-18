@@ -246,7 +246,7 @@ namespace Bank
                                     try
                                     {
                                         Console.Write("Select the amount you wish to deposit:\n>");
-                                        decimal depositedAmount = decimal.Parse(Console.ReadLine());
+                                        decimal depositedAmount = decimal.Parse(Console.ReadLine().Replace(",","."));
 
                                         //Checks for negative amount entries and if the active user has sufficient money to make the deposit
                                         if (depositedAmount > 0 && ActiveAccount.Amount >= depositedAmount)
@@ -300,7 +300,7 @@ namespace Bank
 
                             Console.Write("Select the amount you wish to deposit:\n>");
 
-                            decimal depositedAmount = decimal.Parse(Console.ReadLine());
+                            decimal depositedAmount = decimal.Parse(Console.ReadLine().Replace(",", "."));
 
                             //Checks for negative amount entries and if the active user has sufficient money to make the deposit
                             if (depositedAmount > 0 && CurrentUserAccount.Amount >= depositedAmount)
@@ -370,7 +370,7 @@ namespace Bank
                                 try
                                 {
                                     Console.Write("Select the amount you wish to withdraw:\n>");
-                                    decimal withdrawnAmount = decimal.Parse(Console.ReadLine());
+                                    decimal withdrawnAmount = decimal.Parse(Console.ReadLine().Replace(",", "."));
 
                                     //Checks for negative amount entries and if the normal user has more money than the requested amount
                                     if (withdrawnAmount > 0 && accountToWithdrawFrom.Amount >= withdrawnAmount)
